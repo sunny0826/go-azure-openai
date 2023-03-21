@@ -1,7 +1,6 @@
 package openai
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -72,23 +71,4 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 
 func (c *Client) fullURL(suffix string) string {
 	return fmt.Sprintf("https://%s.%s%s?api-version=%s", c.config.resourceName, c.config.BaseURL, suffix, apiVersion)
-}
-
-func (c *Client) newStreamRequest(
-	ctx context.Context,
-	method string,
-	urlSuffix string,
-	body any) (*http.Request, error) {
-	req, err := c.requestBuilder.build(ctx, method, c.fullURL(urlSuffix), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "text/event-stream")
-	req.Header.Set("Cache-Control", "no-cache")
-	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("api-key", c.config.apiKey)
-
-	return req, nil
 }
